@@ -12,6 +12,9 @@ records using `ogr2ogr`. For a description of county parcel columns, see that da
 
   [hennparcels]: https://www.arcgis.com/home/item.html?id=7975aabf6e1e42998a40a4b085ffefdf
 
+## Releases
+
+Note, everything but the CSV format contains spatial data.
 
 ## Compiling it yourself
 
@@ -25,6 +28,11 @@ the following should configure a virtualenvironment with the python packages
 and node packages necessary to build. The main one for PDF magic is
 `camelot-py`, so if that breaks, welp...
 
+
+Download the [county dataset][hennparcels] and put it here:
+
+    in/hennepin_county_parcels.zip
+
 Set up the environment with: 
 
     make init
@@ -33,3 +41,5 @@ Set up the environment with:
 Build the output zip with:
 
     make all
+
+NB: Camelot will probably take ~10 minutes to process all the pages.

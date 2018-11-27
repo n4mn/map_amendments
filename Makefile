@@ -1,4 +1,3 @@
-.PHONY: wards
 wards: tmp/ward1.csv \
 	   tmp/ward2.csv \
 	   tmp/ward3.csv \
@@ -12,7 +11,6 @@ wards: tmp/ward1.csv \
 	   tmp/ward12.csv \
 	   tmp/ward13.csv
 
-.PHONY: clwards
 clwards: tmp/cl-ward1.csv \
 	   tmp/cl-ward2.csv \
 	   tmp/cl-ward3.csv \
@@ -45,84 +43,84 @@ tmp/ward%.csv: tmp/ward%.processed
 	@echo " --> $@"
 
 ## {{{ individual ward processing with page number definitions
-tmp/ward1.processed: in/amendmenttables.pdf
+tmp/ward1: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward1/
 	camelot -p 1-9 -f csv --output tmp/ward1/ward1 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward2.processed: in/amendmenttables.pdf
+tmp/ward2: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward2/
 	camelot -p 10-13 -f csv --output tmp/ward2/ward2 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward3.processed: in/amendmenttables.pdf
+tmp/ward3: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward3/
 	camelot -p 14-16 -f csv --output tmp/ward3/ward3 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward4.processed: in/amendmenttables.pdf
+tmp/ward4: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward4/
 	camelot -p 17-28 -f csv --output tmp/ward4/ward4 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward5.processed: in/amendmenttables.pdf
+tmp/ward5: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward5/
 	camelot -p 29-35 -f csv --output tmp/ward5/ward5 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward6.processed: in/amendmenttables.pdf
+tmp/ward6: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward6/
 	camelot -p 36-37 -f csv --output tmp/ward6/ward6 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward7.processed: in/amendmenttables.pdf
+tmp/ward7: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward7/
 	camelot -p 38-71 -f csv --output tmp/ward7/ward7 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward8.processed: in/amendmenttables.pdf
+tmp/ward8: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward8/
 	camelot -p 72-87 -f csv --output tmp/ward8/ward8 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward10.processed: in/amendmenttables.pdf
+tmp/ward10: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward10/
 	camelot -p 88-92  -f csv --output tmp/ward10/ward10 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward11.processed: in/amendmenttables.pdf
+tmp/ward11: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward11/
 	camelot -p 93-107 -f csv --output tmp/ward11/ward11 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward12.processed: in/amendmenttables.pdf
+tmp/ward12: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward12/
 	camelot -p 108-133 -f csv --output tmp/ward12/ward12 lattice in/amendmenttables.pdf
 	@touch $@
 	@echo " --> $@"
 
-tmp/ward13.processed: in/amendmenttables.pdf
+tmp/ward13: in/amendmenttables.pdf
 	@echo " - Extracting tables."
 	@mkdir -p tmp/ward13/
 	camelot -p 134-149 -f csv --output tmp/ward13/ward13 lattice in/amendmenttables.pdf
@@ -131,14 +129,22 @@ tmp/ward13.processed: in/amendmenttables.pdf
 
 ## }}}
 
+amendedparcels.csv: tmp/all-wards.csv
+	@cp $^ $@
+	@echo " --> CSV"
+
 amendedparcels.geojson: tmp/map_amendments
 	@ogr2ogr -f "GeoJSON" $@ $^
+	@echo " --> GeoJSON"
 
 amendedparcels.kml: tmp/db.sqlite
 	@ogr2ogr -f "KML" $@ $^
+	@echo " --> KML"
+	zip $@.zip $@
 
 map_amendments_shapefiles.zip:
-	zip -j -r $@ tmp/map_amendments/
+	@zip -j -r $@ tmp/map_amendments/
+	@echo " --> Zip"
 
 define SHP_QUERY
 	SELECT parcels.*, pids.recommend, pids.amended, pids.Address, pids.ward  \
@@ -147,7 +153,7 @@ define SHP_QUERY
 endef
 
 ## Run the query to align datasets.
-tmp/map_amendments: tmp/db.sqlite
+tmp/map_amendments/map_amendments.shp: tmp/db.sqlite
 	@echo " - Filtering"
 	@ogr2ogr -f "ESRI Shapefile" \
 		$@   \
@@ -155,24 +161,24 @@ tmp/map_amendments: tmp/db.sqlite
 		-dialect sqlite \
 		-nln map_amendments \
 		-sql "$(SHP_QUERY)"
-	@cp in/map_amendments_readme.md tmp/map_amendments/README.md
+	@echo " --> Filtered Shapefile"
 
 ## Throw all the bigger datasets in a single Spatialite file for easy querying
 tmp/db.sqlite: tmp/all-wards.csv tmp/mplsparcels
-	@echo " - Combining datasets."
+	@echo " - Combining datasets"
 	@echo "PID","Address","recommend","amended","ward" > tmp/all-wards-sqlsrc.csv
 	@awk 'NR!=1{print}' tmp/all-wards.csv >> tmp/all-wards-sqlsrc.csv
 	@ogr2ogr -f "SQLITE" $@ tmp/mplsparcels -nln parcels -dsco spatialite=yes -nlt MULTIPOLYGON
 	@ogr2ogr -update -append -f "SQLITE" $@ tmp/all-wards-sqlsrc.csv -nln pids
-	@echo "--> db.sqlite"
+	@echo " --> db.sqlite"
 
 ## Filter all the hennepin county parcels to a smaller file that is just
 ## Minneapolis parcels.
 tmp/mplsparcels:
 	@echo " @   $@"
 	@echo " - Decompressing biggie"
-	@unzip datasets/in/hennepin_county_parcels.zip -d tmp/hennepin_county_parcels
-	@echo " --> GeoJSON"
+	@unzip in/hennepin_county_parcels.zip -d tmp/hennepin_county_parcels
+	@echo " - Processing to Shapefile"
 	@ogr2ogr -f "ESRI Shapefile" \
 		$@   \
 		tmp/hennepin_county_parcels/   \
@@ -180,14 +186,14 @@ tmp/mplsparcels:
 		-t_srs "EPSG:4326" \
 		-where "MUNIC_CD = '01'"
 	@rm -rf tmp/hennepin_county_parcels
-	@echo " - Clean"
+	@echo " --> SHP"
 
 all: init \
 	 virtualenv.exists \
 	 wards \
 	 clwards \
 	 tmp/map_amendments \
-	 amendedparcels.kml \
+	 amendedparcels.csv \
 	 amendedparcels.geojson \
 	 map_amendments_shapefiles.zip
 
