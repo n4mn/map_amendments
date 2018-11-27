@@ -1,0 +1,26 @@
+{
+  "name": "mpls2040_map_amendments",
+  "version": "0.1.0",
+  "description": "bbq",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mapbox/togeojson": "^0.16.0",
+    "csv2geojson": "^5.1.1",
+    "csvtojson": "^2.0.8",
+    "d3-dsv": "^1.0.8",
+    "d3-geo-projection": "^2.4.0",
+    "json2csv": "^4.2.1",
+    "ndjson-cli": "^0.3.1",
+    "salted-md5": "^2.2.0",
+    "shapefile": "^0.6.6",
+    "topojson-client": "^3.0.0",
+    "topojson-server": "^3.0.0",
+    "topojson-simplify": "^3.0.2",
+    "underscore": "^1.9.1"
+  }
+}
