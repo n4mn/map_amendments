@@ -1,9 +1,11 @@
 # About this dataset
 
 This is combined from 2018 [hennepin county parcel data][hennparcels], and
-tables precent in the accidentally released #mpls2040 map amendments PDF. Data
-was liberated from the PDF using `camelot-py`, and combined with assessor
-records using `ogr2ogr`. For a description of county parcel columns, see that dataset. Map amendment columns are as follows:
+data tables from the accidentally released #mpls2040 map amendments PDF. Data
+was liberated from the PDF using [camelot-py][camelot], and combined with assessor
+records using `ogr2ogr`. 
+
+For a description of county parcel columns, see that dataset. Map amendment columns are as follows:
 
  * `recommend` - Recommended land use / built form in the pre-council markup.
  * `amended` - Amended in released data
@@ -11,6 +13,7 @@ records using `ogr2ogr`. For a description of county parcel columns, see that da
  * `ward` - Minneapolis ward
 
   [hennparcels]: https://www.arcgis.com/home/item.html?id=7975aabf6e1e42998a40a4b085ffefdf
+  [camelot]: https://camelot-py.readthedocs.io/en/master/
 
 ## Releases
 
